@@ -1,0 +1,333 @@
+{
+ "id": "dragon-egg-hoard",
+ "name": "EXE Dragon Egg Hoard",
+ "boxWord": "dragon egg",
+ "presenter": "eggHoard",
+ "presenterConfig": "presenter_config.json",
+ "colors": {
+  "bg": "#f3e8d2",
+  "accent": "#1f4a3f",
+  "text": "#1d2a26",
+  "gold": "#a8874f"
+ },
+ "sets": [
+  {
+   "id": "hearth",
+   "name": "Hearth Hatchlings"
+  },
+  {
+   "id": "glade",
+   "name": "Glade Wyrms"
+  },
+  {
+   "id": "sky",
+   "name": "Sky & Storm"
+  },
+  {
+   "id": "hoard",
+   "name": "Hoard Keepers"
+  }
+ ],
+ "items": [
+  {
+   "id": "pebble_wyrmling",
+   "name": "Pebble Wyrmling",
+   "set": "hearth",
+   "rarity": "common",
+   "img": "c_pebble_wyrmling.webp",
+   "shinyImg": "c_pebble_wyrmling_shiny.webp",
+   "profile": "compact",
+   "calib": 1,
+   "glints": []
+  },
+  {
+   "id": "teacup_drake",
+   "name": "Teacup Drake",
+   "set": "hearth",
+   "rarity": "common",
+   "img": "c_teacup_drake.webp",
+   "shinyImg": "c_teacup_drake_shiny.webp",
+   "profile": "based",
+   "calib": 1.08,
+   "glints": []
+  },
+  {
+   "id": "mitten_whelp",
+   "name": "Mitten Whelp",
+   "set": "hearth",
+   "rarity": "common",
+   "img": "c_mitten_whelp.webp",
+   "shinyImg": "c_mitten_whelp_shiny.webp",
+   "profile": "wide",
+   "calib": 1.08,
+   "glints": [],
+   "anchor": "visual"
+  },
+  {
+   "id": "ember_snout",
+   "name": "Ember Snout",
+   "set": "hearth",
+   "rarity": "common",
+   "img": "c_ember_snout.webp",
+   "shinyImg": "c_ember_snout_shiny.webp",
+   "profile": "compact",
+   "calib": 1,
+   "glints": []
+  },
+  {
+   "id": "bellows_drake",
+   "name": "Bellows Drake",
+   "set": "hearth",
+   "rarity": "rare",
+   "img": "c_bellows_drake.webp",
+   "shinyImg": "c_bellows_drake_shiny.webp",
+   "profile": "wide",
+   "calib": 1,
+   "glints": []
+  },
+  {
+   "id": "candlewick_wyrm",
+   "name": "Candlewick Wyrm",
+   "set": "hearth",
+   "rarity": "rare",
+   "img": "c_candlewick_wyrm.webp",
+   "shinyImg": "c_candlewick_wyrm_shiny.webp",
+   "profile": "tall",
+   "calib": 1,
+   "glints": []
+  },
+  {
+   "id": "lantern_wyrm",
+   "name": "Lantern Wyrm",
+   "set": "hearth",
+   "rarity": "epic",
+   "img": "c_lantern_wyrm.webp",
+   "shinyImg": "c_lantern_wyrm_shiny.webp",
+   "profile": "tall",
+   "calib": 1,
+   "glints": [],
+   "anchor": "visual"
+  },
+  {
+   "id": "acorn_whelp",
+   "name": "Acorn Whelp",
+   "set": "glade",
+   "rarity": "common",
+   "img": "c_acorn_whelp.webp",
+   "shinyImg": "c_acorn_whelp_shiny.webp",
+   "profile": "compact",
+   "calib": 1,
+   "glints": []
+  },
+  {
+   "id": "fern_glider",
+   "name": "Fern Glider",
+   "set": "glade",
+   "rarity": "common",
+   "img": "c_fern_glider.webp",
+   "shinyImg": "c_fern_glider_shiny.webp",
+   "profile": "floating",
+   "calib": 1,
+   "glints": []
+  },
+  {
+   "id": "pinecone_drake",
+   "name": "Pinecone Drake",
+   "set": "glade",
+   "rarity": "common",
+   "img": "c_pinecone_drake.webp",
+   "shinyImg": "c_pinecone_drake_shiny.webp",
+   "profile": "compact",
+   "calib": 1,
+   "glints": []
+  },
+  {
+   "id": "snailshell_wyrm",
+   "name": "Snailshell Wyrm",
+   "set": "glade",
+   "rarity": "common",
+   "img": "c_snailshell_wyrm.webp",
+   "shinyImg": "c_snailshell_wyrm_shiny.webp",
+   "profile": "wide",
+   "calib": 1,
+   "glints": []
+  },
+  {
+   "id": "thornback",
+   "name": "Thornback",
+   "set": "glade",
+   "rarity": "rare",
+   "img": "c_thornback.webp",
+   "shinyImg": "c_thornback_shiny.webp",
+   "profile": "wide",
+   "calib": 1,
+   "glints": []
+  },
+  {
+   "id": "blossom_wyrm",
+   "name": "Blossom Wyrm",
+   "set": "glade",
+   "rarity": "rare",
+   "img": "c_blossom_wyrm.webp",
+   "shinyImg": "c_blossom_wyrm_shiny.webp",
+   "profile": "tall",
+   "calib": 1,
+   "glints": []
+  },
+  {
+   "id": "root_elder",
+   "name": "Root Elder",
+   "set": "glade",
+   "rarity": "epic",
+   "img": "c_root_elder.webp",
+   "shinyImg": "c_root_elder_shiny.webp",
+   "profile": "tall",
+   "calib": 1,
+   "glints": []
+  },
+  {
+   "id": "cloud_puff",
+   "name": "Cloud Puff",
+   "set": "sky",
+   "rarity": "common",
+   "img": "c_cloud_puff.webp",
+   "shinyImg": "c_cloud_puff_shiny.webp",
+   "profile": "floating",
+   "calib": 1,
+   "glints": []
+  },
+  {
+   "id": "kite_drake",
+   "name": "Kite Drake",
+   "set": "sky",
+   "rarity": "common",
+   "img": "c_kite_drake.webp",
+   "shinyImg": "c_kite_drake_shiny.webp",
+   "profile": "wide",
+   "calib": 1,
+   "glints": [],
+   "anchor": "visual"
+  },
+  {
+   "id": "raindrop_wyrmling",
+   "name": "Raindrop Wyrmling",
+   "set": "sky",
+   "rarity": "common",
+   "img": "c_raindrop_wyrmling.webp",
+   "shinyImg": "c_raindrop_wyrmling_shiny.webp",
+   "profile": "compact",
+   "calib": 1,
+   "glints": []
+  },
+  {
+   "id": "weathervane_drake",
+   "name": "Weathervane Drake",
+   "set": "sky",
+   "rarity": "rare",
+   "img": "c_weathervane_drake.webp",
+   "shinyImg": "c_weathervane_drake_shiny.webp",
+   "profile": "based",
+   "calib": 1.06,
+   "glints": []
+  },
+  {
+   "id": "thunder_drum",
+   "name": "Thunder Drum",
+   "set": "sky",
+   "rarity": "rare",
+   "img": "c_thunder_drum.webp",
+   "shinyImg": "c_thunder_drum_shiny.webp",
+   "profile": "compact",
+   "calib": 1,
+   "glints": []
+  },
+  {
+   "id": "storm_coil",
+   "name": "Storm Coil",
+   "set": "sky",
+   "rarity": "epic",
+   "img": "c_storm_coil.webp",
+   "shinyImg": "c_storm_coil_shiny.webp",
+   "profile": "floating",
+   "calib": 1.04,
+   "glints": []
+  },
+  {
+   "id": "coin_counter",
+   "name": "Coin Counter",
+   "set": "hoard",
+   "rarity": "legendary",
+   "img": "c_coin_counter.webp",
+   "shinyImg": "c_coin_counter_shiny.webp",
+   "profile": "based",
+   "calib": 1.05,
+   "glints": []
+  },
+  {
+   "id": "gem_matriarch",
+   "name": "Gem Matriarch",
+   "set": "hoard",
+   "rarity": "legendary",
+   "img": "c_gem_matriarch.webp",
+   "shinyImg": "c_gem_matriarch_shiny.webp",
+   "profile": "based",
+   "calib": 1.08,
+   "glints": []
+  },
+  {
+   "id": "map_wyrm",
+   "name": "Map Wyrm",
+   "set": "hoard",
+   "rarity": "legendary",
+   "img": "c_map_wyrm.webp",
+   "shinyImg": "c_map_wyrm_shiny.webp",
+   "profile": "tall",
+   "calib": 1,
+   "glints": []
+  },
+  {
+   "id": "hoard_sovereign",
+   "name": "Hoard Sovereign",
+   "set": "hoard",
+   "rarity": "mythic",
+   "img": "c_hoard_sovereign.webp",
+   "shinyImg": "c_hoard_sovereign_shiny.webp",
+   "profile": "based",
+   "calib": 1,
+   "glints": [
+    [
+     0.49255583126550867,
+     0.0023752969121140144
+    ],
+    [
+     0.3709677419354839,
+     0.060570071258907364
+    ],
+    [
+     0.6129032258064516,
+     0.060570071258907364
+    ]
+   ]
+  }
+ ],
+ "version": "1.0.0-rc.1",
+ "font": "Inter",
+ "ui": [
+  "ui_plaque_f1",
+  "ui_plaque_f2",
+  "ui_plaque_f3",
+  "ui_bar_frame",
+  "ui_bar_fill",
+  "ui_gem_off",
+  "ui_gem_on",
+  "ui_luck_a_tab"
+ ],
+ "words": {
+  "currency": "embers",
+  "box": "egg",
+  "boxes": "eggs",
+  "crafted": "forged",
+  "rain": "EGG RAIN",
+  "reward": "dragon egg reward"
+ }
+}

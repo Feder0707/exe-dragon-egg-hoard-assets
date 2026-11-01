@@ -1,0 +1,42 @@
+{
+ "format": "exe-blindbox-presenter",
+ "presenter": "eggHoard",
+ "configVersion": 1,
+ "name": "Elección aprobada · 1 nov · definitiva",
+ "notes": "Aprobada por Feder (31 oct – 1 nov): apertura B (coleccionable), salida solemne, caída según el personaje, cáscaras se apartan, luz Base, celebraciones A, placa y barra de Gemini (B), extras: huevo vivo, captura de luz a la colección, rareza que gira y placa volteada; racha hacia Rare+ con gemas en franja propia («RARE+ IN N») y cartela A encastrada arriba a la izquierda («NEXT: RARE+» / «RARE+ GUARANTEED», 11,6 px reales a 400×440). Placa 880 px; conjunto desplazado 22 px hacia arriba (margen inferior 17 px de lienzo = 6,8 px reales). Anteriores: presenter_config_31oct_con_extras.json y presenter_config_31oct_sin_extras.json.",
+ "layers": {
+  "global": {
+   "open.style": "collect",
+   "lid.height": 150,
+   "appear.style": "solemn",
+   "x.idle": "on",
+   "x.fly": "capture",
+   "x.luck": "plaque",
+   "x.slot": "on",
+   "plaque.art": "B",
+   "bar.art": "art",
+   "luck.style": "A",
+   "plaque.w": 880,
+   "luck.anchor": "plaqueTL",
+   "luck.size": 58,
+   "luck.font": 29,
+   "luck.gap": -68,
+   "luck.track": 0.06,
+   "luck.band": 18,
+   "luck.hold": 6,
+   "luck.pulse": 0.6,
+   "luck.sheen": 0.6,
+   "luck.sparkN": 1,
+   "luck.sparkSize": 6,
+   "luck.strip": "row3",
+   "luck.label": "count",
+   "bar.y": 990,
+   "plaque.y": 800,
+   "layout.sceneY": -22
+  },
+  "rarity": {},
+  "profile": {},
+  "character": {},
+  "shiny": {}
+ }
+}
