@@ -32,7 +32,8 @@
    "luck.label": "count",
    "bar.y": 990,
    "plaque.y": 800,
-   "layout.sceneY": -22
+   "layout.sceneY": -22,
+   "seam.mode": "run"
   },
   "rarity": {},
   "profile": {},
