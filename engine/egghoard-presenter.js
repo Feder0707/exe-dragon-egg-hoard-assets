@@ -749,7 +749,7 @@
   function plaque(ctx, d, a, dy, P, info, clock) {
     if (a <= 0.003) return;
     const art = artMode(P);
-    const band = d._lk && P['luck.style'] !== 'comic' && art ? P['luck.band'] : 0, PW = P['plaque.w'], PH = art ? 230 + Math.round(band * 0.4) : P['plaque.h'], rar = RAR[d.rarity] || RAR.common, x = CX - PW / 2, y = art ? P['plaque.y'] - 52 : P['plaque.y'], inner = art ? PW - 2 * 70 : PW - 2 * P['plaque.pad'];
+    const band = d._lk && P['luck.style'] !== 'comic' && art ? P['luck.band'] : 0, PW = P['plaque.w'], PH = art ? 230 + Math.round(band * 0.4) + (band ? 5 : 0) : P['plaque.h'], rar = RAR[d.rarity] || RAR.common, x = CX - PW / 2, y = art ? P['plaque.y'] - 52 : P['plaque.y'], inner = art ? PW - 2 * 70 : PW - 2 * P['plaque.pad'];
     const rs = P['plaque.rarSize'], ws = P['plaque.rowSize'], ts = P['plaque.tagSize'];
     ctx.save(); ctx.globalAlpha *= a; ctx.translate(0, dy);
     if (art) { ctx.save(); ctx.shadowColor = `rgba(16,24,20,${P['plaque.shadow']})`; ctx.shadowBlur = 14; ctx.shadowOffsetY = 4; plaqueArt(ctx, P, x, y, PW, PH, clock || 0); ctx.restore(); }
@@ -772,7 +772,7 @@
     const tagsW = tw.reduce((a, b) => a + b + 12, -12);
     const LK = d._lk, inRow2 = LK && P['luck.strip'] === 'row2', GG = P['luck.gemGap'], GS = LK ? Math.min(P['luck.gemSize'], (inner * 0.42 - (LK.n - 1) * GG) / LK.n) : 0, gemsW = inRow2 ? LK.n * GS + (LK.n - 1) * GG + 16 : 0;
     const viewer = fitText(ctx, '@' + d.viewer, `500 ${ws}px Inter`, inner - tagsW - 22 - gemsW); ctx.font = `500 ${ws}px Inter`; const vW = ctx.measureText(viewer).width;
-    let x2 = CX - (vW + 22 + gemsW + tagsW) / 2; const r2 = r1 + (art ? (band ? 38 : 44) : P['plaque.gap1']);
+    let x2 = CX - (vW + 22 + gemsW + tagsW) / 2; const r2 = r1 + (art ? (band ? 43 : 44) : P['plaque.gap1']); // name descenders (y, g, p) clear the tag chips
     ctx.fillStyle = TOK.muted; ctx.fillText(viewer, x2, r2); x2 += vW + 22;
     if (inRow2) { luckGems(ctx, LK, x2 - 8, r2 - Math.round(ts * 0.42), GS, GG); x2 += gemsW; }
     const th = Math.round(ts * 1.385);
@@ -1274,13 +1274,24 @@
     }
     ctx.restore();
   }
+  // egg rain: real egg art drifting down both sides, never over the centre column
+  let RAIN_GLOW = null;
+  function rainGlow() { if (RAIN_GLOW) return RAIN_GLOW; const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'), rg = g.createRadialGradient(64, 64, 0, 64, 64, 64); rg.addColorStop(0, 'rgba(255,214,140,0.9)'); rg.addColorStop(0.35, 'rgba(255,190,110,0.35)'); rg.addColorStop(1, 'rgba(255,190,110,0)'); g.fillStyle = rg; g.fillRect(0, 0, 128, 128); return (RAIN_GLOW = c); }
+  function cometEggs(ctx, el, fade, fx) { // "luminous drift": real egg art in three depths (far = small, dim, slow; near = big, bright, faster), soft sway and warm glow
+    const im = R.egg_closed, GL = rainGlow(), N = Math.round(22 * fx), hr = im.height / im.width, rn = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+    for (let i = 0; i < N; i++) { const d = rn(i * 7.3), z = d < 0.45 ? 0 : d < 0.82 ? 1 : 2, h = [22, 38, 62][z], sp = [70, 115, 175][z] * (0.85 + rn(i) * 0.3), per = 1000 + h * 2, y = -60 + (el * sp + rn(i * 5) * per) % per;
+      const side = i % 2 ? 1 : -1, x = CX + side * (250 + rn(i * 3) * 220) + Math.sin(el * (0.6 + rn(i * 2) * 0.7) + i) * (18 + z * 10), a = fade * [0.45, 0.75, 1][z] * seg(y, -60, 40) * (1 - seg(y, 700, 860)); if (a <= 0.01) continue;
+      ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = a * 0.85 * [0.6, 0.9, 1.1][z]; const gs = h * 2.4; ctx.drawImage(GL, x - gs / 2, y - gs / 2, gs, gs); ctx.restore();
+      const w = h / hr; ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y); ctx.rotate(Math.sin(el * 0.9 + i) * 0.35); ctx.drawImage(im, -w / 2, -h / 2, w, h); ctx.restore(); } }
   function drawRain(ctx, st, opts) { // st = { left, total, t, cmd, rm }
     opts = opts || {}; const P = resolve(opts.cfg, { rarity: 'common', profile: 'compact', id: '' }), style = P['celeb.style'], rm = !!st.rm;
     const txt = `EGG RAIN · type ${st.cmd || '!hatch'} · ${Math.max(0, Math.ceil(st.left))}s`, y = 64, el = st.t || 0, fade = clamp(el / 0.6) * clamp(st.left / 0.8);
     ctx.save(); ctx.globalAlpha = fade;
     if (!rm) { // eggs (A) or coins (B) drifting down along both sides, never over the centre
+      if (style === 'A' && R.egg_closed) cometEggs(ctx, el, fade, P['celeb.fx']); else {
       const n = Math.round(10 * P['celeb.fx']); for (let i = 0; i < n; i++) { const side = i % 2 ? 1 : -1, sp = 120 + (i * 37) % 60, ph = (el * sp + i * 113) % 900, x = CX + side * (330 + (i * 53) % 120), yy = -40 + ph; if (yy > 790) continue; ctx.globalAlpha = fade * (1 - seg(yy, 640, 790));
         if (style === 'A') eggIcon(ctx, x + Math.sin(el * 1.3 + i) * 10, yy, 16, 0.85, i % 3 === 0); else coin(ctx, x + Math.sin(el * 1.7 + i) * 8, yy, 11, el * 3 + i, 0.9); }
+      }
       ctx.globalAlpha = fade;
     }
     ctx.font = '600 30px Inter'; const tw = ctx.measureText(txt).width + 64, h = 60;
