@@ -310,6 +310,28 @@
    ]
   }
  ],
+ "sfx": {
+  "bad": "sfx/bad.mp3",
+  "bake": "sfx/bake.mp3",
+  "bar_tick": "sfx/bar_tick.mp3",
+  "channel": "sfx/channel.mp3",
+  "collection": "sfx/collection.mp3",
+  "crumbs": "sfx/crumbs.mp3",
+  "gift_fly": "sfx/gift_fly.mp3",
+  "master": "sfx/master.mp3",
+  "pop": "sfx/pop.mp3",
+  "rain_claim": "sfx/rain_claim.mp3",
+  "rain_end": "sfx/rain_end.mp3",
+  "rain_start": "sfx/rain_start.mp3",
+  "reveal_common": "sfx/reveal_common.mp3",
+  "reveal_epic": "sfx/reveal_epic.mp3",
+  "reveal_legendary": "sfx/reveal_legendary.mp3",
+  "reveal_mythic": "sfx/reveal_mythic.mp3",
+  "reveal_rare": "sfx/reveal_rare.mp3",
+  "set": "sfx/set.mp3",
+  "shake": "sfx/shake.mp3",
+  "shiny": "sfx/shiny.mp3"
+ },
  "version": "1.0.0-rc.1",
  "font": "Inter",
  "ui": [
