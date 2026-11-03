@@ -57,6 +57,7 @@
         await Promise.all(theme.items.map(async i => { imgs[i.img] = await load(b + i.img); const sn = shinyName(i); imgs[sn] = await load(b + sn); }).concat(theme.icons ? Object.values(theme.icons).map(async f => { imgs[f] = await load(b + f); }) : []));
         const pc = cfg.presenterConfig || theme.presenterConfig; if (pc && typeof pc === 'object') presenterCfg = pc.preset ? pc.preset.config : pc; else if (typeof pc === 'string') { try { const j = await (await fetch(b + pc)).json(); presenterCfg = j.preset ? j.preset.config : j; } catch (e) { presenterCfg = null; } }
         await PR.init(b, theme.files || null, theme.ui || null);
+        if (theme.sfx) await Promise.all(Object.entries(theme.sfx).map(async ([k, f]) => { try { const r = await fetch(b + f); if (r.ok) sfxRaw[k] = await r.arrayBuffer(); } catch (e) {} })); // presenter themes: recorded sounds too
         try { await document.fonts.load('700 40px ' + ((cfg.theme && cfg.theme.font) || 'Fredoka')); } catch (e) {}
         ready = true; return;
       }
@@ -312,7 +313,7 @@
 
     // ---------- opening animation state
     const T_POP = 0.8;
-    function prTimes(entry, hold) { const it = entry.res.item; if (PR.timelineFor) { const T = PR.timelineFor({ cfg: presenterCfg, rarity: cfg.previewRarity || it.rarity, profile: it.profile || (PR.legacyProfile ? PR.legacyProfile(it.land) : 'compact'), id: it.id, shiny: !!entry.res.shiny, rm: RM(), hold }); return { pop: T.pop, settle: T.settle, end: T.end }; }
+    function prTimes(entry, hold) { const it = entry.res.item; if (PR.timelineFor) { const T = PR.timelineFor({ cfg: presenterCfg, rarity: cfg.previewRarity || it.rarity, profile: it.profile || (PR.legacyProfile ? PR.legacyProfile(it.land) : 'compact'), id: it.id, shiny: !!entry.res.shiny, rm: RM(), hold }); return { pop: T.pop, settle: T.settle, end: T.end, reveal: T.plaqueIn != null ? T.plaqueIn + 0.9 : T.pop + 0.5 }; } // reveal = when the rarity lands on the plaque
       const rar = cfg.previewRarity || it.rarity, tl = PR.timeline(rar, RM(), it.land); return { pop: tl.pop, settle: tl.settle, end: PR.duration(rar, RM(), it.land, hold) }; }
     function startOpen(entry) {
       if (entry.res.commNew) pendingComm = Math.max(0, pendingComm - 1);
@@ -1430,14 +1431,14 @@
       if (!ready) return;
       if (cur) {
         const prev = cur.t; cur.t += dt; const t = cur.t;
-        const TP = PR ? cur.T.pop : T_POP, TR = PR ? cur.T.pop + 0.5 : T_POP + 0.5, TC = PR ? cur.T.settle : T_POP + 1.2;
+        const TP = PR ? cur.T.pop : T_POP, TR = PR ? (cur.T.reveal != null ? cur.T.reveal : cur.T.pop + 0.5) : T_POP + 0.5, TC = PR ? cur.T.settle : T_POP + 1.2;
         if (prev < 0.25 && t >= 0.25) { sfxWarm(); sfx('shake', SFX.shake); }
         if (prev < TP && t >= TP) sfx('pop', SFX.pop);
         if (prev < TR && t >= TR) {
           const r = cur.entry.res; sfx('reveal_' + r.item.rarity, () => SFX.reveal(r.item.rarity));
           if (r.shiny) sfx('shiny', SFX.shiny, 0.15);
           if (!r.isNew) sfx('crumbs', null, 0.7);
-          if (r.commNew && !r.commDone && theme.hud) sfx('bar_tick', null, 0.45);
+          if (r.commNew && !r.commDone && (theme.hud || PR)) sfx('bar_tick', null, 0.45);
         }
         const end = PR ? cur.T.end : T_POP + 1.0 + cur.hold + 1.1;
         if (prev < TC && t >= TC) {
