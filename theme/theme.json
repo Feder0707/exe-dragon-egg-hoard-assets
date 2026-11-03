@@ -342,7 +342,9 @@
   "ui_bar_fill",
   "ui_gem_off",
   "ui_gem_on",
-  "ui_luck_a_tab"
+  "ui_luck_a_tab",
+  "ui_panel_frame",
+  "ui_panel_slot"
  ],
  "words": {
   "currency": "embers",
