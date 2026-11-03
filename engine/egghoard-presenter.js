@@ -1312,7 +1312,7 @@
   function pSil(im, w, h) { const k = im.src + '|' + w + 'x' + h; if (silCache.has(k)) return silCache.get(k); const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.drawImage(im, 0, 0, w, h); x.globalCompositeOperation = 'source-in'; x.fillStyle = 'rgba(120,108,88,0.38)'; x.fillRect(0, 0, w, h); silCache.set(k, c); return c; }
   function pGlow(ctx, x, y, r, col, a) { if (a <= 0.005) return; const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, `rgba(${col},${a})`); g.addColorStop(1, `rgba(${col},0)`); ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r); }
   function pRR(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
-  const heartbeat = t => { const p = (t % 1.4) / 1.4; return Math.max(Math.exp(-Math.pow((p - 0.08) / 0.05, 2)), 0.7 * Math.exp(-Math.pow((p - 0.27) / 0.06, 2))); };
+  const heartbeat = t => Math.pow((1 - Math.cos(2 * Math.PI * t / 2.4)) / 2, 1.6); // slow, smooth beat (2.4 s)
   let SWEEP = null;
   function hasPanel() { return !!(R.ui && R.ui.panel_frame && R.ui.panel_slot); }
   // d = { name, found, total, shiny, embers, craft, cost, sets: [{ name, items: [{ img, shinyImg, rarity, has, shiny }] }] }
