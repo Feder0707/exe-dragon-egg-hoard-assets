@@ -1153,6 +1153,11 @@
       ctx.restore();
     }
 
+    function panelData(p) { // collection data for the presenter's own panel art
+      const v = S.viewers[p.key]; if (!v) return null;
+      return { name: v.n, found: theme.items.filter(i => owned(v, i.id)).length, total: theme.items.length, shiny: theme.items.filter(i => v.items[i.id] && v.items[i.id][1] > 0).length, embers: v.crumbs, craft: cfg.craftCmd, cost: cfg.craftCost,
+        sets: theme.sets.map(set => ({ name: set.name, items: theme.items.filter(i => i.set === set.id).map(i => ({ img: imgs[i.img], shinyImg: imgs[shinyName(i)] || null, rarity: i.rarity, has: owned(v, i.id), shiny: !!(v.items[i.id] && v.items[i.id][1] > 0) })) })).filter(s => s.items.length) };
+    }
     function drawPanel(p, a) {
       const v = S.viewers[p.key]; if (!v) return; const C = theme.colors;
       ctx.save(); ctx.globalAlpha = a;
@@ -1465,7 +1470,8 @@
         ctx.save(); ctx.translate(W / 2, H); ctx.scale(cfg.scale, cfg.scale); ctx.translate(-W / 2, -H);
         PR.draw(ctx, presenterState()); drawHud(null);
         ctx.restore();
-        if (panel) drawPanel(panel, clamp(panel.t / 0.25) * (1 - clamp((panel.t - cfg.panelSecs + 0.3) / 0.3)));
+        if (panel && PR.drawPanel && PR.hasPanel && PR.hasPanel()) { const pd = panelData(panel); if (pd) PR.drawPanel(ctx, pd, panel.t, cfg.panelSecs); }
+        else if (panel) drawPanel(panel, clamp(panel.t / 0.25) * (1 - clamp((panel.t - cfg.panelSecs + 0.3) / 0.3)));
         if (celeb && PR.drawCeleb) PR.drawCeleb(ctx, celeb, { cfg: presenterCfg, rm: RM() });
         else if (celeb && cfg.celebStyle === 'cinema' && theme.banners && imgs[(theme.banners[celeb.kind] || {}).img]) drawCinema(celeb);
         else if (celeb) drawCeleb(celeb, clamp(celeb.t / 0.15) * (1 - clamp((celeb.t - 3.35) / 0.45)));

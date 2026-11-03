@@ -316,6 +316,7 @@
     const want = n => !uiList || uiList.includes(n); // a product theme lists the interface art it ships; the lab loads everything
     for (const n of ['ui_plaque_f1', 'ui_plaque_f2', 'ui_plaque_f3'].filter(want)) { const f = files && files[n + '.png'] ? files[n + '.png'] : base + n + '.png'; const im = await load(f); if (im) R.ui.plaque.push(im); }
     for (const n of ['ui_bar_frame', 'ui_bar_fill', 'ui_pedestal', 'ui_ember_jar', 'ui_luck_egg', 'ui_luck_mask', 'ui_clover_solo', 'ui_pop_your_luck', 'ui_pop_ur_luck', 'ui_pop_luck', 'ui_gem_off', 'ui_gem_on', 'ui_pop_one_more', 'ui_pop_lucky', 'ui_pop_next_rare', 'ui_luck_a_tab', 'ui_luck_b_ribbon', 'ui_luck_c_seal', 'ui_luck_c_cartouche'].filter(want)) { const f = files && files[n + '.png'] ? files[n + '.png'] : base + n + '.png'; R.ui[n] = await load(f); }
+    for (const n of ['ui_panel_frame', 'ui_panel_slot'].filter(want)) { const f = files && files[n + '.png'] ? files[n + '.png'] : base + n + '.png'; const im = await load(f); if (im) R.ui[n.slice(3)] = im; }
     R.ready = true;
   }
   // size: equal silhouette area (balanced), capped; calibration (catalog) and fig.scale multiply uniformly
@@ -1304,7 +1305,62 @@
   }
 
   window.BlindBoxPresenters = window.BlindBoxPresenters || {};
-  window.BlindBoxPresenters.eggHoard = { VERSION, CONFIG_VERSION, init, draw, drawCeleb, drawRain, celebDuration, timelineFor, paramsFor, resolve, resolveWithSource, relevant, emptyConfig, legacyProfile,
+  // ---- !collection panel (option A · ivory): Gemini frame + slots, light sweep, dragons light up one by one, shiny shimmer, set-complete glow, jade gems beating
+  const PANEL_RCOL = { common: '#8a8f99', rare: '#3f8fe0', epic: '#9b5de5', legendary: '#e0a33f', mythic: '#e0407a' };
+  const PANEL_GEMS = [[0.071, 0.071], [0.928, 0.07], [0.062, 0.501], [0.938, 0.501], [0.071, 0.931], [0.929, 0.932], [0.499, 0.939]];
+  const silCache = new Map();
+  function pSil(im, w, h) { const k = im.src + '|' + w + 'x' + h; if (silCache.has(k)) return silCache.get(k); const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.drawImage(im, 0, 0, w, h); x.globalCompositeOperation = 'source-in'; x.fillStyle = 'rgba(120,108,88,0.38)'; x.fillRect(0, 0, w, h); silCache.set(k, c); return c; }
+  function pGlow(ctx, x, y, r, col, a) { if (a <= 0.005) return; const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, `rgba(${col},${a})`); g.addColorStop(1, `rgba(${col},0)`); ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r); }
+  function pRR(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+  const heartbeat = t => { const p = (t % 1.4) / 1.4; return Math.max(Math.exp(-Math.pow((p - 0.08) / 0.05, 2)), 0.7 * Math.exp(-Math.pow((p - 0.27) / 0.06, 2))); };
+  let SWEEP = null;
+  function hasPanel() { return !!(R.ui && R.ui.panel_frame && R.ui.panel_slot); }
+  // d = { name, found, total, shiny, embers, craft, cost, sets: [{ name, items: [{ img, shinyImg, rarity, has, shiny }] }] }
+  function drawPanel(ctx, d, t, dur) {
+    const FR = R.ui.panel_frame, SL = R.ui.panel_slot, W = 1000, FX = 60, FY = 120, FS = 880, IN0 = FX + FS * 0.117, IN1 = FX + FS * 0.883, IT = FY + FS * 0.117;
+    const out = 1 - seg(t, dur - 0.35, dur), k = eo(seg(t, 0, 0.5)) * out; if (k <= 0) return;
+    ctx.save(); ctx.fillStyle = `rgba(4,10,12,${0.55 * k})`; ctx.fillRect(0, 0, W, 1100);
+    const u = seg(t, 0, 0.55), sc = 0.9 + 0.1 * (1 + 2.7 * Math.pow(u - 1, 3) + 1.7 * Math.pow(u - 1, 2)); ctx.globalAlpha = k; ctx.translate(W / 2, FY + FS / 2); ctx.scale(sc, sc); ctx.translate(-W / 2, -(FY + FS / 2));
+    pGlow(ctx, W / 2, FY + FS / 2, FS * 0.68, '255,214,140', 0.10 + 0.05 * (0.5 + 0.5 * Math.sin(t * 2.2)));
+    ctx.drawImage(FR, FX, FY, FS, FS);
+    // light sweep over the gold border (on open and once more before closing)
+    for (const t0 of [0.35, Math.max(1.6, dur - 2.6)]) { const s = seg(t, t0, t0 + 0.9); if (s <= 0 || s >= 1) continue;
+      if (!SWEEP) { SWEEP = document.createElement('canvas'); SWEEP.width = SWEEP.height = FS; } const lx = SWEEP.getContext('2d'); lx.globalCompositeOperation = 'source-over'; lx.clearRect(0, 0, FS, FS); const xx = -FS * 0.4 + s * FS * 1.8;
+      const g = lx.createLinearGradient(xx - 140, 0, xx + 140, 0); g.addColorStop(0, 'rgba(255,240,200,0)'); g.addColorStop(0.5, 'rgba(255,244,214,0.75)'); g.addColorStop(1, 'rgba(255,240,200,0)');
+      lx.save(); lx.translate(FS / 2, FS / 2); lx.rotate(-0.5); lx.translate(-FS / 2, -FS / 2); lx.fillStyle = g; lx.fillRect(-FS, -FS, FS * 3, FS * 3); lx.restore();
+      lx.globalCompositeOperation = 'destination-in'; lx.drawImage(FR, 0, 0, FS, FS); lx.globalCompositeOperation = 'destination-out'; lx.fillRect(FS * 0.12, FS * 0.12, FS * 0.76, FS * 0.76);
+      ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = k * 0.85; ctx.drawImage(SWEEP, FX, FY); ctx.restore(); }
+    // jade gems: a soft green heartbeat
+    const hb = heartbeat(t);
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; PANEL_GEMS.forEach(([gx, gy]) => { pGlow(ctx, FX + gx * FS, FY + gy * FS, 34, '90,230,150', (0.10 + 0.55 * hb) * k); pGlow(ctx, FX + gx * FS, FY + gy * FS, 14, '190,255,215', (0.05 + 0.45 * hb) * k); }); ctx.restore();
+    // title (cartouche) + summary
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#3a2a10'; let fs = 25; ctx.font = `600 ${fs}px Fraunces`; const title = d.name + "'s hoard";
+    while (ctx.measureText(title).width > FS * 0.38 && fs > 14) { fs--; ctx.font = `600 ${fs}px Fraunces`; } ctx.fillText(title, W / 2, FY + FS * 0.062);
+    ctx.globalAlpha = k * seg(t, 0.35, 0.8); ctx.fillStyle = '#6a6250'; ctx.font = '700 21px Inter';
+    ctx.fillText(`${d.found} / ${d.total} FOUND   ·   ${d.shiny} SHINY   ·   ${d.embers} EMBERS  (${d.craft} = ${d.cost})`, W / 2, IT + 44); ctx.globalAlpha = k;
+    const cell = 86, gap = 9, GX = IN0 + ((IN1 - IN0) - (7 * cell + 6 * gap)) / 2; let y = IT + 82, idx = 0;
+    d.sets.forEach((set, si) => { const have = set.items.filter(i => i.has).length, done = have === set.items.length && have > 0;
+      const ra = seg(t, 0.5 + si * 0.18, 0.8 + si * 0.18); ctx.globalAlpha = k * ra; ctx.textAlign = 'left'; ctx.font = '600 22px Fraunces'; ctx.fillStyle = done ? '#2f8a5a' : '#3c4b44'; ctx.fillText(set.name, GX, y + 10);
+      const nw = ctx.measureText(set.name).width; ctx.font = '700 18px Inter'; ctx.fillStyle = '#6a6250'; ctx.fillText(`${have}/${set.items.length}`, GX + nw + 12, y + 11);
+      if (done) { const dt = seg(t, 1.9, 2.4), lbl = '✦ SET COMPLETE'; ctx.font = '700 16px Inter'; const tw = ctx.measureText(lbl).width, px = GX + nw + 64; ctx.globalAlpha = k * dt; ctx.fillStyle = 'rgba(233,199,122,0.20)'; pRR(ctx, px - 10, y - 2, tw + 20, 26, 13); ctx.fill(); ctx.strokeStyle = 'rgba(233,199,122,0.9)'; ctx.lineWidth = 1.5; ctx.stroke(); ctx.fillStyle = '#7a5a14'; ctx.fillText(lbl, px, y + 11); ctx.globalAlpha = k * ra;
+        const s = seg(t, 1.9, 2.8); if (s > 0 && s < 1) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; pGlow(ctx, GX + s * 7 * (cell + gap), y + 30 + cell / 2, 110, '255,214,140', 0.35 * Math.sin(Math.PI * s) * k); ctx.restore(); } }
+      let cx = GX;
+      set.items.forEach(it => { const i = idx++, x0 = cx, y0 = y + 30, ta = seg(t, 0.55 + i * 0.045, 0.85 + i * 0.045);
+        ctx.save(); ctx.globalAlpha = k * ta; const pop = it.has ? 1 + 0.12 * Math.sin(Math.PI * seg(t, 0.75 + i * 0.045, 1.05 + i * 0.045)) : 1; ctx.translate(x0 + cell / 2, y0 + cell / 2); ctx.scale(pop, pop); ctx.translate(-(x0 + cell / 2), -(y0 + cell / 2));
+        const ins = cell * 0.10; ctx.fillStyle = it.has ? 'rgba(255,250,238,0.95)' : 'rgba(214,204,182,0.55)'; pRR(ctx, x0 + ins, y0 + ins, cell - 2 * ins, cell - 2 * ins, 8); ctx.fill();
+        if (it.has) { ctx.save(); pRR(ctx, x0 + ins, y0 + ins, cell - 2 * ins, cell - 2 * ins, 8); ctx.clip(); pGlow(ctx, x0 + cell / 2, y0 + cell * 0.62, cell * 0.6, it.shiny ? '166,236,232' : '255,214,140', 0.35); ctx.restore(); }
+        const im = it.shiny && it.shinyImg ? it.shinyImg : it.img; if (im) { const s = Math.min((cell * 0.70) / im.width, (cell * 0.70) / im.height), w = Math.round(im.width * s), h = Math.round(im.height * s), ix = x0 + (cell - w) / 2, iy = y0 + (cell - h) / 2 + 2;
+          if (it.has) ctx.drawImage(im, ix, iy, w, h); else ctx.drawImage(pSil(im, w, h), ix, iy); }
+        ctx.drawImage(SL, x0, y0, cell, cell);
+        if (it.has) { ctx.fillStyle = PANEL_RCOL[it.rarity] || '#8a8f99'; ctx.beginPath(); ctx.arc(x0 + cell - 13, y0 + cell - 13, 5, 0, 7); ctx.fill(); ctx.strokeStyle = '#fff6dc'; ctx.lineWidth = 1.5; ctx.stroke(); }
+        ctx.restore();
+        if (it.has) { const s = seg(t, 0.75 + i * 0.045, 1.25 + i * 0.045); if (s > 0 && s < 1) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; pGlow(ctx, x0 + cell / 2, y0 + cell / 2, cell * 0.9, '255,214,140', 0.5 * (1 - s) * k); for (let q = 0; q < 4; q++) { const ang = q * 1.57 + 0.6, dd = 20 + 34 * eo(s); star4(ctx, x0 + cell / 2 + Math.cos(ang) * dd, y0 + cell / 2 + Math.sin(ang) * dd, 7, (1 - s) * k, '#fff1cc'); } ctx.restore(); } }
+        if (it.shiny && it.has && ta > 0.9) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; for (let q = 0; q < 3; q++) { const r1 = Math.abs(Math.sin((i + q) * 91.7)) % 1, r2 = Math.abs(Math.sin((i * 3 + q) * 47.3)) % 1, r3 = Math.abs(Math.sin((i * 5 + q) * 13.1)) % 1, ph = (t * 0.9 + q / 3 + r1) % 1, a = Math.sin(Math.PI * ph); star4(ctx, x0 + 16 + r2 * (cell - 32), y0 + 14 + r3 * (cell - 28), 6 + 4 * a, a * k, '#e6fffb'); } ctx.restore(); }
+        cx += cell + gap; });
+      y += cell + 52; });
+    ctx.restore();
+  }
+  window.BlindBoxPresenters.eggHoard = { VERSION, CONFIG_VERSION, init, draw, drawPanel, hasPanel, drawCeleb, drawRain, celebDuration, timelineFor, paramsFor, resolve, resolveWithSource, relevant, emptyConfig, legacyProfile,
     SCHEMA, SECTIONS, RARITIES, PROFILES, FAM, DEF_RAR, DEF_PROF, W, H, G, sizeOf, alphaInfo,
     // backwards-compatible helpers used by the 0.7.0-dev engine
     timeline: (rarity, rm, land) => { const P = resolve(null, { rarity, profile: legacyProfile(land) }); return times(P, rm, 4); },
